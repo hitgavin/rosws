@@ -1,7 +1,7 @@
 <package>
-	<name>euler_angle</name>
+	<name>frames</name>
 	<version>0.0.1</version>
-	<description>The euler angle package</description>
+	<description>The frames rotation package</description>
 	<author email="todo@todo.com">gavin</author>
 	<maintainer email="todo@todo.com">gavin</maintainer>>
 	
@@ -9,5 +9,8 @@
 	
 	<buildtool_depend>catkin</buildtool_depend>
 	<build_depend>roscpp</build_depend>
+	<build_depend>rostest</build_depend>
+	
 	<run_depend>roscpp</run_depend>
+	<run_depend>rostest</run_depend>
 </package>
