@@ -60,3 +60,58 @@ void Rotation::getEulerZXZ(double &alpha, double &beta, double &gamma) const {
     gamma = atan2(data[6], data[7]);
   }
 }
+
+void Rotation::getQuaternion(double &x, double &y, double &z, double &w) const {
+  double epsilon = 1E-12;
+  double r11 = data[0];
+  double r12 = data[1];
+  double r13 = data[2];
+  double r21 = data[3];
+  double r22 = data[4];
+  double r23 = data[5];
+  double r31 = data[6];
+  double r32 = data[7];
+  double r33 = data[8];
+  w = sqrt(1.0f + r11 + r22 + r33) / 2.0f;
+  if (fabs(w) > epsilon) {
+    // compute w first.
+    x = (r32 - r23) / (4 * w);
+    y = (r13 - r31) / (4 * w);
+    z = (r21 - r12) / (4 * w);
+  } else {
+    if (r11 >= r22 && r11 >= r33) {
+      // compute x first
+      x = sqrt(1.0f + r11 - r22 - r33) / 2.0f;
+      w = (r32 - r23) / (4 * x);
+      y = (r21 + r12) / (4 * x);
+      z = (r31 + r13) / (4 * x);
+    } else if (r22 >= r11 && r22 >= r33) {
+      // compute y first
+      y = sqrt(1.0f - r11 + r22 - r33) / 2.0f;
+      w = (r13 - r31) / (4 * y);
+      x = (r21 + r12) / (4 * y);
+      z = (r23 + r32) / (4 * y);
+    } else {
+      // compute z first
+      z = sqrt(1.0f - r11 - r22 + r33) / 2.0f;
+      w = (r21 - r12) / (4 * z);
+      x = (r13 + r31) / (4 * z);
+      y = (r23 + r32) / (4 * z);
+    }
+  }
+}
+
+Rotation Rotation::quaternion(double x, double y, double z, double w) {
+  Rotation r;
+  r.data[0] = 1 - 2 * y * y - 2 * z * z;
+  r.data[1] = 2 * (x * y - w * z);
+  r.data[2] = 2 * (x * z + w * y);
+  r.data[3] = 2 * (x * y + w * z);
+  r.data[4] = 1 - 2 * x * x - 2 * z * z;
+  r.data[5] = 2 * (y * z - w * x);
+  r.data[6] = 2 * (x * z - w * y);
+  r.data[7] = 2 * (y * z + w * x);
+  r.data[8] = 1 - 2 * x * x - 2 * y * y;
+
+  return r;
+}
