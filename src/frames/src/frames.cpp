@@ -143,8 +143,7 @@ void Rotation::getAxialAngle(double &x, double &y, double &z,
     y = 1 / (2 * sin(theta)) * (data[2] - data[6]);
     z = 1 / (2 * sin(theta)) * (data[3] - data[1]);
   } else {
-    if (fabs(data[0] - 1) < epsilon && fabs(data[4] - 1) < epsilon &&
-        fabs(data[8] - 1) < epsilon) {
+    if (v > 0.0f) {
       // \theta = 0, diagonal elements approaching 1
       theta = 0;
       x = 0;
