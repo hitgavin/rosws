@@ -27,6 +27,7 @@ public:
    * @param[in] alpha rotation angle along z axis
    * @param[in] beta rotation angle along x axis
    * @param[in] gamma rotation angle along z axis
+   * @return rotation object.
    * @note R = rotz(alpha)*rotx(beta)*rotz(gamma)
   */
   static Rotation eulerZXZ(double alpha, double beta, double gamma);
@@ -37,8 +38,18 @@ public:
    * @param[in] y Y of the quaternion
    * @param[in] z Z of the quaternion
    * @param[in] w W of the quaternion
+   * @return rotation object.
   */
   static Rotation quaternion(double x, double y, double z, double w);
+  /**
+   * @brief Convert axial angle to rotation object.
+   * @param[in] x X of the axial angle
+   * @param[in] y Y of the axial angle
+   * @param[in] z Z of the axial angle
+   * @param[in] theta rotation angle of the axial angle
+   * @return rotation object.
+  */
+  static Rotation axialAngle(double x, double y, double z, double theta);
   /**
    * @brief Get euler ZXZ from the Rotation.
    * @param[in] alpha Reference to rotation angle along z axis
@@ -56,11 +67,20 @@ public:
   */
   void getQuaternion(double &x, double &y, double &z, double &w) const;
   /**
+   * @brief Get axial angle from the Rotation.
+   * @param[in] x Reference to axial angle x
+   * @param[in] y Reference to axial angle y
+   * @param[in] z Reference to axial angle z
+   * @param[in] theta Reference to axial angle theta
+  */
+  void getAxialAngle(double &x, double &y, double &z, double &theta) const;
+  /**
    * @brief data of the rotation matrix
    * @note the rotation matrix is defined as:
    * [data[0], data[1], data[2];
    *  data[3], data[4], data[5];
    *  data[6], data[7], data[8]]
    * */
+
   double data[9];
 };

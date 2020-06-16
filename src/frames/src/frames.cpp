@@ -43,6 +43,38 @@ Rotation Rotation::eulerZXZ(double alpha, double beta, double gamma) {
                   sb * sg, cg * sb, cb);
 }
 
+Rotation Rotation::quaternion(double x, double y, double z, double w) {
+  Rotation r;
+  r.data[0] = 1 - 2 * y * y - 2 * z * z;
+  r.data[1] = 2 * (x * y - w * z);
+  r.data[2] = 2 * (x * z + w * y);
+  r.data[3] = 2 * (x * y + w * z);
+  r.data[4] = 1 - 2 * x * x - 2 * z * z;
+  r.data[5] = 2 * (y * z - w * x);
+  r.data[6] = 2 * (x * z - w * y);
+  r.data[7] = 2 * (y * z + w * x);
+  r.data[8] = 1 - 2 * x * x - 2 * y * y;
+
+  return r;
+}
+
+Rotation Rotation::axialAngle(double x, double y, double z, double theta) {
+  // Rodriguez formula
+  // R = E + \hat{a} * sin(\theta) + \hat{a}^2 * (1 - cos(\thata))
+  Rotation r;
+  r.data[0] = x * x * (1 - cos(theta)) + cos(theta);
+  r.data[1] = x * y * (1 - cos(theta)) - z * sin(theta);
+  r.data[2] = x * z * (1 - cos(theta)) + y * sin(theta);
+  r.data[3] = x * y * (1 - cos(theta)) + z * sin(theta);
+  r.data[4] = y * y * (1 - cos(theta)) + cos(theta);
+  r.data[5] = y * z * (1 - cos(theta)) - x * sin(theta);
+  r.data[6] = x * z * (1 - cos(theta)) - y * sin(theta);
+  r.data[7] = y * z * (1 - cos(theta)) + x * sin(theta);
+  r.data[8] = z * z * (1 - cos(theta)) + cos(theta);
+
+  return r;
+}
+
 void Rotation::getEulerZXZ(double &alpha, double &beta, double &gamma) const {
   double epsilon = 1E-12;
   if (fabs(data[8] > 1 - epsilon)) {
@@ -101,17 +133,43 @@ void Rotation::getQuaternion(double &x, double &y, double &z, double &w) const {
   }
 }
 
-Rotation Rotation::quaternion(double x, double y, double z, double w) {
-  Rotation r;
-  r.data[0] = 1 - 2 * y * y - 2 * z * z;
-  r.data[1] = 2 * (x * y - w * z);
-  r.data[2] = 2 * (x * z + w * y);
-  r.data[3] = 2 * (x * y + w * z);
-  r.data[4] = 1 - 2 * x * x - 2 * z * z;
-  r.data[5] = 2 * (y * z - w * x);
-  r.data[6] = 2 * (x * z - w * y);
-  r.data[7] = 2 * (y * z + w * x);
-  r.data[8] = 1 - 2 * x * x - 2 * y * y;
-
-  return r;
+void Rotation::getAxialAngle(double &x, double &y, double &z,
+                             double &theta) const {
+  double epsilon = 1E-12;
+  double v = (data[0] + data[4] + data[8] - 1.0f) / 2.0f;
+  if (fabs(v) > epsilon) {
+    theta = acos(v);
+    x = 1 / (2 * sin(theta)) * (data[7] - data[5]);
+    y = 1 / (2 * sin(theta)) * (data[2] - data[6]);
+    z = 1 / (2 * sin(theta)) * (data[3] - data[1]);
+  } else {
+    if (fabs(data[0] - 1) < epsilon && fabs(data[4] - 1) < epsilon &&
+        fabs(data[8] - 1) < epsilon) {
+      // \theta = 0, diagonal elements approaching 1
+      theta = 0;
+      x = 0;
+      y = 0;
+      z = 1;
+    } else {
+      // \theta = \pi
+      // find maximum element in the diagonal elements
+      theta = PI;
+      if (data[0] >= data[4] && data[0] >= data[8]) {
+        // calculate x first
+        x = sqrt((data[0] + 1) / 2);
+        y = data[1] / (2 * x);
+        z = data[2] / (2 * x);
+      } else if (data[4] >= data[0] && data[4] >= data[8]) {
+        // calculate y first
+        y = sqrt((data[4] + 1) / 2);
+        x = data[3] / (2 * y);
+        z = data[5] / (2 * y);
+      } else {
+        // calculate z first
+        z = sqrt((data[8] + 1) / 2);
+        x = data[6] / (2 * z);
+        y = data[7] / (2 * z);
+      }
+    }
+  }
 }

@@ -63,6 +63,32 @@ TEST_F(RotationTest, TestGetQuaternion) {
   }
 }
 
+TEST_F(RotationTest, TestAxialAngle) {
+  // rotation pi/3 along z axis
+  // r = [x, y, z, theta] = [0, 0, 1, pi/3]
+  double data[9] = {
+      cos(PI / 3), -sin(PI / 3), 0, sin(PI / 3), cos(PI / 3), 0, 0, 0, 1};
+  double epsilon = 1e-6;
+  Rotation rot = Rotation::axialAngle(0, 0, 1, PI / 3);
+  for (int i = 0; i < sizeof(data) / sizeof(double); ++i) {
+    ASSERT_LT(fabs(rot.data[i] - data[i]), epsilon);
+  }
+}
+
+TEST_F(RotationTest, TestGetAxialAngle) {
+  double x, y, z, theta;
+  rot_.getAxialAngle(x, y, z, theta);
+  Eigen::AngleAxisd aa(theta, Eigen::Vector3d(x, y, z));
+  Eigen::Matrix3d r = aa.toRotationMatrix();
+
+  double epsilon = 1e-6;
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+      ASSERT_LT(fabs(r(i, j) - rot_.data[i * 3 + j]), epsilon);
+    }
+  }
+}
+
 int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
