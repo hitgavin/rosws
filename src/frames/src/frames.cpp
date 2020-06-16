@@ -137,7 +137,7 @@ void Rotation::getAxialAngle(double &x, double &y, double &z,
                              double &theta) const {
   double epsilon = 1E-12;
   double v = (data[0] + data[4] + data[8] - 1.0f) / 2.0f;
-  if (fabs(v) > epsilon) {
+  if (fabs(v) < 1 - epsilon) {
     theta = acos(v);
     x = 1 / (2 * sin(theta)) * (data[7] - data[5]);
     y = 1 / (2 * sin(theta)) * (data[2] - data[6]);
