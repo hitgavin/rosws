@@ -1,0 +1,8 @@
+<launch>
+  <param name="use_sim_time" value="true"/>
+  <!-- 启动仿真环境加载小车 -->
+  <include file="$(find hello_navigation)/launch/myAGV.launch" />
+  <!-- 启动SLAM -->
+  <include file="$(find hello_navigation)/launch/params_slam.launch" />
+
+</launch>

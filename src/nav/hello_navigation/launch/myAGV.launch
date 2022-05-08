@@ -1,0 +1,22 @@
+<launch>
+
+  <!-- 设置参数 其中param的名字必须是robot_description -->
+  <param name="robot_description" textfile="$(find mobile_description)/urdf/myAGV.urdf" />
+
+  <!-- 启动 rviz -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find mobile_description)/config/myAGV.rviz" />
+
+  <!-- 启动机器人状态和关节状态发布节点 -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/>
+  <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" />
+
+  <!-- 启动 gazebo -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch" >
+      <arg name="use_sim_time" value="true"/>
+      <arg name="world_name" value="$(find mobile_description)/world/house.world" />
+  </include>
+
+  <!-- 在 gazebo 中显示机器人模型 -->
+  <node pkg="gazebo_ros" type="spawn_model" name="myAGV" args="-urdf -model myAGV -param robot_description"  />
+
+</launch>

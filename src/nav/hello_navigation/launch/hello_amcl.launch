@@ -1,0 +1,10 @@
+<launch>
+    
+  <!-- 启动仿真环境加载小车 -->
+  <include file="$(find hello_navigation)/launch/myAGV.launch" />
+  <!-- 启动map_server -->
+  <include file="$(find hello_navigation)/launch/params_mapserver.launch" />
+  <!-- 启动AMCL -->
+  <include file="$(find hello_navigation)/launch/params_amcl.launch" />
+
+</launch>
